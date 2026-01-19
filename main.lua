@@ -1,4 +1,3 @@
-runtime.version = "Lua 5.3"
 local lgi = require 'lgi'
 local Gtk = lgi.require("Gtk", "3.0")
 
