@@ -29,7 +29,7 @@ local textview = Gtk.TextView {
   visible = true,
   can_focus = true,
   vexpand = true,
-  wrap_mode = Gtk.WrapMode.WORDCHAR,
+  wrap_mode = Gtk.WrapMode.WORD_CHAR,
   accepts_tab = true,
   buffer = Gtk.TextBuffer { text = "placeholder"}
 }

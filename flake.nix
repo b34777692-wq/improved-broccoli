@@ -18,6 +18,8 @@
         packages = [
           lua.lua
           lua.lgi
+          lua.fennel
+          pkgs.fennel-ls
           pkgs.gtk3
           pkgs.lua-language-server
           pkgs.gobject-introspection
