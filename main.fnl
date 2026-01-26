@@ -29,21 +29,41 @@
       (scroll:add textView)
       (buttonBox:add buttonSave)
       (buttonBox:add buttonOpen)
-      (let [show_open_dialog (fn show_open_dialog []
+      (let [buffer (textView:get_buffer)]
+        (fn show_open_dialog []
                                (let [native (Gtk.FileChooserNative
                                               {:title "Open a file"
                                                :action Gtk.FileChooserAction.OPEN
                                                :accept_label "_Open"
-                                               :cancel_label "_Cancel"})]
-                                 (let [response (native:run)]
+                                               :cancel_label "_Cancel"})
+                                            result (let [response (native:run)]
                                    (if (= response Gtk.ResponseType.ACCEPT)
                                        (let [file (native:get_file)
                                               path (file:get_path)]
-                                         (with-open [f (io.open path :r)] (f:read :*all))
-                                          )) (native:destroy))))
-                             buffer (textView:get_buffer)]
-        (set buttonOpen.on_clicked (fn [widget]
-                                     ((print (show_open_dialog)))))))))
+                                         (print path)
+                                         (with-open [f (io.open path "r")] (f:read "*all")))))]
+                                   (native:destroy)
+                                   result))
+        (fn show_save_dialog [data]
+          (let [native (Gtk.FileChooserNative
+                          {:title "Save to file"
+                           :action Gtk.FileChooserAction.SAVE
+                           :accept_label "_Save"
+                           :cancel_label "_Cancel"
+                           :do_overwrite_confirmation true})]
+            (let [response (native:run)]
+              (if (= response Gtk.ResponseType.ACCEPT)
+                  (let [file (native:get_file)
+                              path (file:get_path)]
+                    (with-open [f (io.open path "w")] (f:write data))
+                    (native:destroy))))))
+        (set buttonSave.on_clicked (fn [_]
+                                     (let [data buffer.text]
+                                       (show_save_dialog data))))
+        (set buttonOpen.on_clicked (fn [_]
+                                     (let [contents (show_open_dialog)]
+                                       (when contents
+                                         (set buffer.text contents)))))))))
 (window:show_all)
 (Gtk.main)
 (print "")

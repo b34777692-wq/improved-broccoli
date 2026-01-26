@@ -95,6 +95,7 @@ end
 function window.child.save:on_clicked()
   local buffer = textview:get_buffer()
   local data = buffer.text
+  print(data)
   show_save_dialog(data)
 end
 

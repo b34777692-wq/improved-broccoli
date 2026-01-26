@@ -37,6 +37,38 @@
           export GSETTINGS_SCHEMA_DIR="${builtins.concatStringsSep ":" (map getSchemas schemas)}"
         '';
       };
+      packages.default = pkgs.stdenv.mkDerivation {
+          pname = "notes";
+          version = "0.1.0";
+
+          src = ./.;
+
+          nativeBuildInputs = [
+            lua.fennel
+            pkgs.makeWrapper
+            pkgs.wrapGAppsHook3
+          ];
+
+          buildInputs = [
+            lua.lua
+            lua.lgi
+            pkgs.gtk3
+            pkgs.glib
+            pkgs.gsettings-desktop-schemas
+            pkgs.pango
+            pkgs.harfbuzz
+            ];
+
+          buildPhase = ''
+            fennel --compile-binary main.fnl notes ${lua.lua}/lib/liblua.a ${lua.lua}/include
+          '';
+
+          installPhase = ''
+            mkdir -p $out/bin
+            install -m755 notes $out/bin/notes
+          '';
+
+        };
     }
   );
 }
