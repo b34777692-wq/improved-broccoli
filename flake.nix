@@ -7,6 +7,9 @@
     let
       pkgs = nixpkgs.legacyPackages.${system};
       lua = pkgs.lua53Packages;
+      luaEnv = lua.lua.withPackages (ps: with ps; [
+        lgi
+      ]);
       schemas = [
         pkgs.gtk3
         pkgs.gsettings-desktop-schemas
@@ -55,6 +58,7 @@
             pkgs.gtk3
             pkgs.glib
             pkgs.gsettings-desktop-schemas
+            pkgs.gobject-introspection
             pkgs.pango
             pkgs.harfbuzz
             ];
@@ -66,9 +70,14 @@
           installPhase = ''
             mkdir -p $out/bin
             install -m755 notes $out/bin/notes
+
+            wrapProgram $out/bin/notes \
+              --set LUA_PATH "${lua.lgi}/share/lua/5.3/?.lua;${lua.lgi}/share/lua/5.3/?/init.lua" \
+              --set LUA_CPATH "${lua.lgi}/lib/lua/5.3/?.so"
           '';
 
         };
+      meta.mainProgram = "notes";
     }
   );
 }
