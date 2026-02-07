@@ -3,13 +3,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     utils.url = "github:numtide/flake-utils";
   };
-  outputs = { self, nixpkgs, utils }: utils.lib.eachDefaultSystem (system:
+  outputs = {  nixpkgs, utils }: utils.lib.eachDefaultSystem (system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
       lua = pkgs.lua53Packages;
-      luaEnv = lua.lua.withPackages (ps: with ps; [
-        lgi
-      ]);
       schemas = [
         pkgs.gtk3
         pkgs.gsettings-desktop-schemas
@@ -23,6 +20,8 @@
           lua.lgi
           lua.fennel
           pkgs.fennel-ls
+          pkgs.fnlfmt
+          pkgs.vimPlugins.nvim-treesitter-parsers.fennel
           pkgs.gtk3
           pkgs.lua-language-server
           pkgs.gobject-introspection
